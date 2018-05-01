@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    <tr>
+        <th>User</th>
+        <th>Bet</th>
+        <th>Multiplier</th>
+    </tr>
+    <tr th:each="item : ${info}">
+        <td th:text="${item.key.login}"></td>
+        <td th:text="${item.value.bet}"></td>
+        <td th:text="${item.value.multiplier}"></td>
+    </tr>
+</table>
+</body>
+</html>

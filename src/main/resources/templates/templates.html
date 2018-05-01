@@ -1,0 +1,115 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:fragment="header_menu">
+    <div sec:authorize="isAuthenticated()" class="remove-filter pull-left">
+    <button type="submit" onclick="location.href = '/logout'">Log out</button><br>
+        User Name :<span th:text="${user.login}"></span> <br/>
+        Balance :<span th:text="${user.balance}"></span> <br/>
+        Email :<span th:text="${user.email}"></span> <br/>
+</div>
+    <div sec:authorize="!isAuthenticated()" class="remove-filter pull-left">
+        <button type="submit" onclick="location.href = '/login'">Log in</button><br>
+    </div>
+</div>
+
+<div th:fragment="history" id="history">
+    <h1>Game list</h1>
+
+    <table>
+        <tr>
+            <th>Game</th>
+            <th>Hash</th>
+            <th>Date</th>
+        </tr>
+        <tr th:each="game : ${games}">
+            <td><a th:href="${'/crash/games/' + game.id}" th:text="${game.id}"></a></td>
+            <td th:text="${game.hash}"></td>
+            <td th:text="${game.date}"></td>
+        </tr>
+    </table>
+    <div class="hrefs">
+        <th th:each="n : ${#numbers.sequence(1,pagesCount)}">
+            <a th:href="${'/crash/history/'+n}" th:text="${n}">
+
+
+            </a>
+        </th>
+    </div>
+
+</div>
+
+
+<div th:fragment="game" id="game">
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="connect">WebSocket connection:</label>
+                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
+                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!---<div sec:authorize="isAuthenticated()"><span th:text="${model.user.balance}">someValue</span></div>-->
+    <div class="row">
+        <div class="col-md-12">
+            <table id="conversation" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Greetings</th>
+                </tr>
+                </thead>
+                <tbody id="greetings">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div>
+        Bet : <input type="text" name="bet" id="mybet" class="form-control"/> <br/><br/>
+        Multiplier : <input type="text" name="multiplier" id="myMultiplier" class="form-control"/> <br/><br/>
+        <button class="btn btn-primary" onclick="bet()">Bet</button>
+    </div>
+
+    <div id="notification" hidden style="width: 200px; height: 100px; background-color: cornflowerblue; color: chartreuse; text-align: center; ">
+
+    </div>
+    <script type="application/javascript">
+
+        function bet() {
+
+            var bet = document.getElementById("mybet").value;
+            var multiplier = document.getElementById("myMultiplier").value;
+
+            var data = {bet: bet, multiplier: multiplier};
+            $.ajax({
+                type : "POST",
+                contentType : "application/json",
+                url : window.location+"/bet",
+                data : JSON.stringify(data),
+                dataType : 'json',
+                timeout : 100000,
+                success : function() {
+                    console.log("SUCCESS");
+                },
+                error : function(e) {
+                    console.log("ERROR: ", e);
+                },
+                done : function(e) {
+                    console.log("DONE");
+                }
+            });
+        };
+    </script>
+</div>
+
+</body>
+</html>
