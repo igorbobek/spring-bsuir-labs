@@ -36,14 +36,6 @@ function showNotification(message) {
 
 }
 
-function disconnect() {
-    if (stompClient !== null) {
-        stompClient.disconnect();
-    }
-    setConnected(false);
-    console.log("Disconnected");
-}
-
 
 function showGreeting(message) {
     var values = message.split(":");
@@ -63,5 +55,5 @@ $(function () {
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#send" ).click(function() { sendName(); });
-    $("#connect").trigger("click");
+    connect();
 });

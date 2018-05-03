@@ -145,7 +145,7 @@ public class CrashService extends Thread{
                 notif.forEach((user, bet)->{
                     if(bet.getMultiplier() <= crashPoint) {
                         User curUser = userService.findById(user);
-                        userService.changeBalance(curUser.getLogin(), bet.getBet()*crashPoint);
+                        userService.changeBalance(curUser.getLogin(), bet.getBet()*bet.getMultiplier());
                         template.convertAndSendToUser("admin", "/game/crash", new ContentMsg(HtmlUtils.htmlEscape(String.format("You won: %.2f coins.", bet.getBet()*crashPoint))));
                     }
                 });

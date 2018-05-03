@@ -9,10 +9,7 @@
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script src="/app.js"></script>
 </head>
-<body>
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
-    enabled. Please enable
-    Javascript and reload this page!</h2></noscript>
+<body style="width: 70%; margin: 0 auto">
 <header style="height: 50px">
     <div th:replace="templates :: header_menu"></div>
 </header>
@@ -20,6 +17,5 @@
 <div id="container">
     <div th:include="templates :: ((${template} == game)  ? game : history)"></div>
 </div>
-
 </body>
 </html>

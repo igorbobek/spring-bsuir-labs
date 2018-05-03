@@ -7,6 +7,7 @@ import com.frenzi.firstSpring.Model.Game;
 import com.frenzi.firstSpring.Model.History;
 import com.frenzi.firstSpring.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 

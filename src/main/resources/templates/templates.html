@@ -10,19 +10,28 @@
 <div th:fragment="header_menu">
     <div sec:authorize="isAuthenticated()" class="remove-filter pull-left">
     <button type="submit" onclick="location.href = '/logout'">Log out</button><br>
-        User Name :<span th:text="${user.login}"></span> <br/>
-        Balance :<span th:text="${user.balance}"></span> <br/>
-        Email :<span th:text="${user.email}"></span> <br/>
+        User Name :<span class="badge badge-pill badge-primary" th:text="${user.login}"></span> <br/>
+        Balance :<span class="badge badge-pill badge-primary" th:text="${user.balance}"></span> <br/>
+        Email :<span class="badge badge-pill badge-primary" th:text="${user.email}"></span> <br/>
+        <ol class="breadcrumb">
+            <li><a href="/crash">Home</a></li>
+            <li><a href="/crash/history/1">History</a></li>
+            <li><a href="/user/history/1">My history</a></li>
+        </ol>
 </div>
     <div sec:authorize="!isAuthenticated()" class="remove-filter pull-left">
         <button type="submit" onclick="location.href = '/login'">Log in</button><br>
+        <ol class="breadcrumb">
+            <li><a href="/crash">Home</a></li>
+            <li><a href="/crash/history/1">History</a></li>
+        </ol>
     </div>
 </div>
 
 <div th:fragment="history" id="history">
     <h1>Game list</h1>
 
-    <table>
+    <table class="table table-striped">
         <tr>
             <th>Game</th>
             <th>Hash</th>
@@ -36,7 +45,7 @@
     </table>
     <div class="hrefs">
         <th th:each="n : ${#numbers.sequence(1,pagesCount)}">
-            <a th:href="${'/crash/history/'+n}" th:text="${n}">
+            <a th:href="${n}" th:text="${n}">
 
 
             </a>
@@ -48,24 +57,11 @@
 
 <div th:fragment="game" id="game">
     <div class="row">
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="connect">WebSocket connection:</label>
-                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <!---<div sec:authorize="isAuthenticated()"><span th:text="${model.user.balance}">someValue</span></div>-->
-    <div class="row">
         <div class="col-md-12">
             <table id="conversation" class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Greetings</th>
+                    <th>Crash Game</th>
                 </tr>
                 </thead>
                 <tbody id="greetings">
