@@ -1,0 +1,14 @@
+#greetings{
+    font-size: 100px;
+    text-align: center;
+}
+body{
+    background-color: ghostwhite;
+}
+
+.infoUser{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
