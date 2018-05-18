@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User user) throws Exception{
-        if(findByLogin(user.getLogin()) == null && findByEmail(user.getEmail()) == null){
+        if(findByLogin(user.getName()) == null && findByEmail(user.getEmail()) == null){
             Role role = roleDao.findByRole("USER");
             user.setRoles(new HashSet<>(Arrays.asList(role)));
             userDao.save(user);
@@ -50,7 +50,8 @@ public class UserServiceImpl implements UserService {
         if (user.getBalance() + balance < 0){
             return;
         }
-        user.setBalance(user.getBalance()+balance);
+        double newBalance = Double.parseDouble(String.format("%.2f", user.getBalance()+balance));
+        user.setBalance(newBalance);
         update(user);
     }
 
@@ -79,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByLogin(String login) {
-        return userDao.findByLogin(login);
+        return userDao.findByName(login);
     }
 
     @Override

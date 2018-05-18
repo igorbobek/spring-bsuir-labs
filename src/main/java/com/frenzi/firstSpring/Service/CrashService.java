@@ -1,6 +1,7 @@
 package com.frenzi.firstSpring.Service;
 
 
+import com.frenzi.firstSpring.Dao.GameDao;
 import com.frenzi.firstSpring.Dao.UserDao;
 import com.frenzi.firstSpring.Entity.ContentMsg;
 import com.frenzi.firstSpring.Model.Bet;
@@ -45,6 +46,10 @@ public class CrashService extends Thread{
     UserService userService;
     @Autowired
     UserDao userDao;
+    @Autowired
+    GameService gameService;
+    @Autowired
+    GameDao gameDao;
 
 
     @PostConstruct
@@ -93,7 +98,7 @@ public class CrashService extends Thread{
         allowForBet = true;
         double timer = 5.0d;
         while (timer > 0) {
-            sendMessage("/game/crash", "tick:" + String.format("%.1f", timer));
+            sendMessage("/game/crash", "pause:" + String.format("%.1f", timer));
             timer -= 0.1d;
             sleep(100);
         }
@@ -110,6 +115,7 @@ public class CrashService extends Thread{
             t = (long)(101-100*tickValue/Math.sqrt(Math.pow(tickValue,2)+ 32));
             sleep(t);
         }
+        sendMessage("/game/crash", "end:"+String.format("%.2f", tickValue));
     }
 
     public void addPlayer(Long userId, Bet bet){
@@ -123,10 +129,15 @@ public class CrashService extends Thread{
         Game game = new Game();
         game.setDate(new Date());
         game.setHash(hash);
-        game.setMultiplier(crashPoint);
-        bets.forEach((user, bet)->{
-            historyService.save(user , bet,game);
-        });
+        game.setMultiplier(Double.parseDouble(String.format("%.2f", crashPoint)));
+        if(bets.isEmpty()){
+            gameService.save(game);
+        }else {
+            bets.forEach((user, bet) -> {
+                bet.setDate(new java.sql.Date(new Date().getTime()));
+                historyService.save(user, bet, game);
+            });
+        }
         bets.clear();
     }
 
@@ -145,8 +156,8 @@ public class CrashService extends Thread{
                 notif.forEach((user, bet)->{
                     if(bet.getMultiplier() <= crashPoint) {
                         User curUser = userService.findById(user);
-                        userService.changeBalance(curUser.getLogin(), bet.getBet()*bet.getMultiplier());
-                        template.convertAndSendToUser("admin", "/game/crash", new ContentMsg(HtmlUtils.htmlEscape(String.format("You won: %.2f coins.", bet.getBet()*crashPoint))));
+                        userService.changeBalance(curUser.getName(), bet.getBet()*bet.getMultiplier());
+                        template.convertAndSendToUser(curUser.getName(), "/game/crash", new ContentMsg(HtmlUtils.htmlEscape(String.format("You won: %.2f coins.", bet.getBet()*bet.getMultiplier()))));
                     }
                 });
             }catch (Exception e){

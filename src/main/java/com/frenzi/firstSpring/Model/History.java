@@ -18,7 +18,7 @@ public class History {
     @JoinColumn(name = "id_bet")
     private Bet bet;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_game")
     private Game game;
 

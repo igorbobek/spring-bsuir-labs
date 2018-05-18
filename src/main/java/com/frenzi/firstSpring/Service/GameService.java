@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 public interface GameService {
     void save(Game game, String hash);
+    void save(Game game);
     List<Game> getAllGames();
     List<Game> getGamesOfUser(Long idUser);
     Game findById(Long gameId);
     Map<User,Bet> getInfoGame(Long gameId);
+    List<Game> getAllByOrderByDate();
 }

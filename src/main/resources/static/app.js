@@ -1,5 +1,8 @@
 var stompClient = null;
-
+var betButton;
+var mul;
+var bet;
+let flag = true;
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
@@ -40,20 +43,63 @@ function showNotification(message) {
 function showGreeting(message) {
     var values = message.split(":");
     switch (values[0]){
-        case "tick": tick(values[1])
+        case "tick": tick(values[1]); break;
+        case "pause": pause(values[1]); break;
+        case "end": end(values[1]); break;
     }
 }
 
+function end(value) {
+    $("#greetings").html("<tr style='color: red'><td>" + value + "</td></tr>");
+}
+
+function pause(value) {
+    if(flag){
+        $.ajax({
+            type : "GET",
+            contentType : "application/json",
+            url : window.location+"/getUser",
+            dataType : 'json',
+            timeout : 100000,
+            success : function(data) {
+                let balance = document.getElementById('balance');
+                balance.innerHTML = 'Баланс: '+ data;
+            },
+            error : function(e) {
+                console.log("ERROR: ", e);
+            },
+            done : function(e) {
+                console.log("DONE");
+            }
+        });
+
+        bet.disabled = false;
+        mul.disabled = false;
+        betButton.disabled = false;
+        flag=false;
+    }
+    $("#greetings").html("<tr><td>Pause: " + value + "</td></tr>");
+}
+
+
 function tick(number) {
-    $("#greetings").html("<tr><td>" + number + "</td></tr>");
+    flag= true;
+    bet.disabled = true;
+    mul.disabled = true;
+    betButton.disabled = true;
+    $("#greetings").html("<tr style='color: green'><td>" + number + "</td></tr>");
 }
 
 $(function () {
+    bet = document.getElementById("mybet");
+    mul = document.getElementById("multiplier");
+    betButton = document.getElementById("bet");
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#send" ).click(function() { sendName(); });
+
     connect();
 });

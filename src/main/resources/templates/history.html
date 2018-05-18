@@ -8,14 +8,28 @@
 <body>
 <table class="table table-striped">
     <tr>
+        <th>Game id</th>
+        <th>Game Multiplier</th>
         <th>User</th>
         <th>Bet</th>
         <th>Multiplier</th>
     </tr>
     <tr th:each="item : ${info}">
-        <td th:text="${item.key.login}"></td>
+        <td th:text="${game.id}"></td>
+        <td th:text="${game.multiplier}"></td>
+        <td th:text="${item.key.name}"></td>
         <td th:text="${item.value.bet}"></td>
         <td th:text="${item.value.multiplier}"></td>
+        <td>
+            <div sec:authorize="hasRole('ROLE_ADMIN')" style="display: contents;">
+            <form th:method="POST" th:action="@{/deleteGame}">
+                <input th:value="${game.id}" type="hidden" name="gameId">
+                <button type="submit" style="border: 0; background: transparent; float: right;">
+                    <img src="https://www.freeiconspng.com/uploads/remove-icon-png-26.png" style="width: 64px;">
+                </button>
+            </form>
+        </div>
+        </td>
     </tr>
 </table>
 </body>

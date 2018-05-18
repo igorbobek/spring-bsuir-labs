@@ -23,10 +23,10 @@ public class UserDetailsServiceImp implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName)
             throws UsernameNotFoundException {
-        User activeUserInfo = userDao.findByLogin(userName);
+        User activeUserInfo = userDao.findByName(userName);
         List<GrantedAuthority> listOfAuthority = new ArrayList<>();
         activeUserInfo.getRoles().forEach(role -> listOfAuthority.add(new SimpleGrantedAuthority("ROLE_" + role.getRole())));
-        UserDetails userDetails = (UserDetails)new org.springframework.security.core.userdetails.User(activeUserInfo.getLogin(),
+        UserDetails userDetails = (UserDetails)new org.springframework.security.core.userdetails.User(activeUserInfo.getName(),
                 activeUserInfo.getPassword(), listOfAuthority);
         return userDetails;
     }

@@ -1,10 +1,19 @@
 package com.frenzi.firstSpring.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frenzi.firstSpring.Dao.GameDao;
 import com.frenzi.firstSpring.Entity.ContentMsg;
 import com.frenzi.firstSpring.Model.Bet;
 import com.frenzi.firstSpring.Model.User;
 import com.frenzi.firstSpring.Service.*;
+import com.google.common.collect.ImmutableSet;
+
+import org.bitcoinj.core.*;
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.TestNet3Params;
+import org.bitcoinj.store.BlockStore;
+import org.bitcoinj.store.MemoryBlockStore;
+import org.bitcoinj.wallet.Wallet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -17,9 +26,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.Principal;
 import java.util.*;
+
 
 @Controller
 public class CrashController {
@@ -45,6 +60,7 @@ public class CrashController {
         Map<String, Object> map = new HashMap<>();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         modelAndView.addObject("template", "game");
+        modelAndView.addObject("games", gameService.getAllByOrderByDate().subList(0,10));
         if(!(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)){
             modelAndView.addObject("user", userService.findByLogin(auth.getName()));
         }
@@ -103,16 +119,24 @@ public class CrashController {
         }
     }
 
+
     @GetMapping("/crash/games/{id}")
     @ResponseBody
     public ModelAndView getInfoGame(@PathVariable("id") String strId )throws NumberFormatException{
         ModelAndView modelAndView = new ModelAndView();
         Long id = Long.parseLong(strId);
         modelAndView.addObject("info",gameService.getInfoGame(id));
-        modelAndView.setViewName("history");
-        //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        modelAndView.addObject("game",gameService.findById(id));
+        modelAndView.addObject("template", "game_history");
+        modelAndView.setViewName("crash");
+        modelAndView.addObject("user", userService.findByLogin(SecurityContextHolder.getContext().getAuthentication().getName()));
 
         return modelAndView;
+    }
+
+    @PostMapping("/")
+    public void index(HttpServletResponse response)throws IOException{
+        response.sendRedirect("/");
     }
 
 }

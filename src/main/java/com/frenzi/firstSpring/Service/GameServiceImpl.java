@@ -41,6 +41,11 @@ public class GameServiceImpl implements GameService {
         return game;
     }
 
+    @Override
+    public void save(Game game) {
+        gameDao.save(game);
+    }
+
     @Nullable
     @Override
     public List<Game> getGamesOfUser(Long idUser) {
@@ -53,6 +58,11 @@ public class GameServiceImpl implements GameService {
             }
         }
         return game;
+    }
+
+    @Override
+    public List<Game> getAllByOrderByDate() {
+        return new ArrayList<>(gameDao.getAllByOrderByDateDesc());
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.util.Set;
 public interface UserDao extends CrudRepository<User, Long> {
 
         User findByEmail(String email);
-        User findByLogin(String login);
+        User findByName(String name);
         Optional<User> findById(Long id);
 
 }

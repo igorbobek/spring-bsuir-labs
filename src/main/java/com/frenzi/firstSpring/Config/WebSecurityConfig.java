@@ -44,14 +44,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll().anyRequest().permitAll()
+                .antMatchers("/**","/static/**").permitAll().anyRequest().permitAll()
                 .and()
                 .formLogin().loginPage("/login")
                 .permitAll()
                 .successForwardUrl("/")
-                .loginProcessingUrl("/login").usernameParameter("login").passwordParameter("password")
+                .loginProcessingUrl("/login").usernameParameter("name").passwordParameter("password")
                 .and()
-                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/");
 
     }
 

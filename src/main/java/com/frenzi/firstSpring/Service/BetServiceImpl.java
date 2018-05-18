@@ -80,8 +80,8 @@ public class BetServiceImpl implements BetService{
     public boolean makeBet(Long userId, Bet bet){
         if(userDao.findById(userId).isPresent()){
             User user = userDao.findById(userId).get();
-            if(crashService.isAllowForBet() && userDao.findById(userId).get().getBalance() >= bet.getBet() && !crashService.getBets().containsKey(user.getId())){
-                userService.changeBalance(user.getLogin(), bet.getBet()*-1);
+            if(crashService.isAllowForBet() && userDao.findById(userId).get().getBalance() >= bet.getBet() && !crashService.getBets().containsKey(user.getId()) && bet.getMultiplier() >= 1.1){
+                userService.changeBalance(user.getName(), bet.getBet()*-1);
                 crashService.addPlayer(userId, bet);
                 return true;
             }

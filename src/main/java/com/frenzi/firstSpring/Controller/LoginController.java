@@ -12,34 +12,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 @Controller
+@Secured("ROLE_ANONYMOUS")
 public class LoginController {
 
     @Autowired
     UserServiceImpl userService;
 
-    @Secured("ROLE_ANONYMOUS")
-    @RequestMapping(value = "/login")
+    @GetMapping("/login")
     public ModelAndView login(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("login");
-        modelAndView.addObject("user", userService.findByLogin(auth.getName()));
+        modelAndView.addObject("user", new User());
         return modelAndView;
     }
-
-    @ResponseBody
-    @Secured("ROLE_ANONYMOUS")
-    @PostMapping("/login")
-    public ModelAndView login(Model model, Error errors){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByLogin(auth.getName());
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("user", user);
-        modelAndView.setViewName("login");
-        return modelAndView;
-    }
-
-
 
 }

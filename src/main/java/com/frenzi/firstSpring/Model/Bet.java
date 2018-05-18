@@ -2,6 +2,7 @@ package com.frenzi.firstSpring.Model;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,19 +16,10 @@ public class Bet implements Serializable {
 
     private Double bet;
     private Double multiplier;
+    private Date date;
 
-    //@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    //@JoinTable(name = "history", joinColumns = @JoinColumn(name = "id_bet", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "id_user", referencedColumnName = "id"))
-
-
-    //private Set<User> users = new HashSet<>();
-
-
-    //@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    //@JoinTable(name = "history", joinColumns = @JoinColumn(name = "id_bet", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "id_game", referencedColumnName = "id"))
     @OneToMany(mappedBy = "bet",fetch = FetchType.EAGER )
     private Set<History> history = new HashSet<>();
-    //private Set<Game> games = new HashSet<>();
 
     public Set<History> getHistory() {
         return history;
@@ -60,20 +52,12 @@ public class Bet implements Serializable {
     public void setBet(Double bet) {
         this.bet = bet;
     }
-    /*
-    public Set<User> getUsers() {
-        return users;
+
+    public Date getDate() {
+        return date;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setDate(Date date) {
+        this.date = date;
     }
-
-    public Set<Game> getGames() {
-        return games;
-    }
-
-    public void setGames(Set<Game> games) {
-        this.games = games;
-    }*/
 }

@@ -8,30 +8,69 @@
 <body>
 
 <div th:fragment="header_menu">
-    <div sec:authorize="isAuthenticated()" class="remove-filter pull-left">
-    <button type="submit" onclick="location.href = '/logout'">Log out</button><br>
-        User Name :<span class="badge badge-pill badge-primary" th:text="${user.login}"></span> <br/>
-        Balance :<span class="badge badge-pill badge-primary" th:text="${user.balance}"></span> <br/>
-        Email :<span class="badge badge-pill badge-primary" th:text="${user.email}"></span> <br/>
-        <ol class="breadcrumb">
-            <li><a href="/crash">Home</a></li>
-            <li><a href="/crash/history/1">History</a></li>
-            <li><a href="/user/history/1">My history</a></li>
-        </ol>
-</div>
-    <div sec:authorize="!isAuthenticated()" class="remove-filter pull-left">
-        <button type="submit" onclick="location.href = '/login'">Log in</button><br>
-        <ol class="breadcrumb">
-            <li><a href="/crash">Home</a></li>
-            <li><a href="/crash/history/1">History</a></li>
-        </ol>
+    <div style="width: 100%; height: 100px;
+    background-color: #000;margin-bottom: 16px;box-shadow: -1px 5px 20px 20px rgb(0, 0, 0);    border-top: 5px solid #0012b5;">
+        <div sec:authorize="isAuthenticated()">
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-white">
+                    <a style="color: aliceblue;padding-top: 22px;" href="http://localhost:8080/"><h1 style="text-shadow: -1px 0 #1f00ff, -3px -4px 13px #004aff, 1px 0 #000eff, 0 -1px #003cff;;margin: auto;
+                                        padding: 16px;
+                                        text-decoration: underline;
+                                        font-size: 60px;
+                                        font-style: italic;">CryptoCrash</h1>
+                    </a>
+                </ul>
+                <div>
+                    <div style="margin-left: 400px; position: absolute;     padding: 17px;">
+                        <a style="    font-size: 16px; color: white;
+    font-style: italic;
+    font-family: fantasy;margin-left: 9px;" th:text="${'Привет: '+user.name}">t</a>
+                        <img style="    border-radius: 50%;
+    margin-left: 11px;" th:src="${user.image} "th:width="30px"/>
+                        <h4 style="color: white;" id="balance" th:text="${'Баланс: '+user.balance}">Банасл</h4>
+                        <h4 style="color: white;" th:text="${'BTC: '+user.wallets[0].balance}">Банасл</h4>
+                    </div>
+                </div>
+                <button class="btn btn-dark" style="float: right;margin-top: 12px;background: #fea00a;
+                     col>r: antiquewhite;" type="submit" onclick="location.href = '/logout'">Выйти</button>
+                <button  style="float: right; margin-right: 13px;margin-top: 12px;background: #fea00a;
+                         color: antiquewhite;" onclick="location.href = '/crash/history/1' " class="btn btn-dark" type="submit">Все игры</button>
+                <button  style="float: right; margin-right: 13px;margin-top: 12px;background: #fea00a;
+                         color: antiquewhite;" onclick="location.href = '/user/history/1' " class="btn btn-dark" type="submit">Мои игры</button>
+                <div sec:authorize="hasRole('ROLE_ADMIN')" style="margin-left: 32px">
+                    <button  style="float: right; margin-right: 13px;margin-top: 12px;" onclick="location.href = '/admin/getXmlUsers' " class="btn btn-info" type="submit">XmlUsers</button>
+                    <button  style="float: right; margin-right: 13px;margin-top: 12px;" onclick="location.href = '/admin/getXmlGames' " class="btn btn-info" type="submit">XmlGames</button>
+                    <button  style="float: right; margin-right: 13px;margin-top: 12px;" onclick="location.href = '/admin/changeBalance' " class="btn btn-info" type="submit">Change balance</button>
+                </div>
+            </div>
+
+        </div>
+        <div sec:authorize="!isAuthenticated()">
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-white">
+                    <a style="color: aliceblue;padding-top: 22px;" href="http://localhost:8080/"><h1 style="text-shadow: -1px 0 #1f00ff, -3px -4px 13px #004aff, 1px 0 #000eff, 0 -1px #003cff;margin: auto;
+                                        padding: 16px;
+                                        text-decoration: underline;
+                                        font-size: 60px;
+                                        font-style: italic;">CryptoCrash</h1>
+                    </a>
+                </ul>
+                <div style="float: right;    margin-top: 12px;">
+                    <button style="    background: #fea00a;
+                                color: black; " class="btn btn-dark" type="submit" onclick="location.href = '/login'">Вход/Регистрация</button><br>
+                </div>
+                <button  style="float: right; margin-right: 13px;margin-top: 12px;background: #fea00a;
+                         color: antiquewhite;" onclick="location.href = '/crash/history/1' " class="btn btn-dark" type="submit">Все игры</button>
+            </div>
+        </div>
     </div>
+    <hr>
 </div>
 
 <div th:fragment="history" id="history">
-    <h1>Game list</h1>
-
-    <table class="table table-striped">
+    <div style="    width: 70%;
+    margin: auto;">
+    <table class="table table-striped" style="background: #ececec;">
         <tr>
             <th>Game</th>
             <th>Hash</th>
@@ -40,28 +79,65 @@
         <tr th:each="game : ${games}">
             <td><a th:href="${'/crash/games/' + game.id}" th:text="${game.id}"></a></td>
             <td th:text="${game.hash}"></td>
-            <td th:text="${game.date}"></td>
+            <td th:text="${#dates.format(game.date, 'dd-MM-yyyy HH:mm:ss')}"></td>
+            <td>
+                <div sec:authorize="hasRole('ROLE_ADMIN')" style="display: contents;">
+                    <form th:method="POST" th:action="@{/deleteGame}">
+                        <input th:value="${game.id}" type="hidden" name="gameId">
+                        <button type="submit" style="border: 0; background: transparent; float: right;">
+                            <img src="https://www.freeiconspng.com/uploads/remove-icon-png-26.png" style="width: 64px;">
+                        </button>
+                    </form>
+                </div>
+            </td>
         </tr>
     </table>
-    <div class="hrefs">
-        <th th:each="n : ${#numbers.sequence(1,pagesCount)}">
+    <div class="hrefs" style="background: aliceblue;
+    border-radius: 11px;
+    padding: 8px;">
+        Pages: <th th:each="n : ${#numbers.sequence(1,pagesCount)}">
             <a th:href="${n}" th:text="${n}">
 
 
             </a>
         </th>
     </div>
-
+    </div>
 </div>
+
+<div th:fragment="game_history" id="history">
+    <div style="    width: 70%;
+    margin: auto;">
+        <table class="table table-striped" style="background: #ececec;">
+            <tr>
+                <th>Game id</th>
+                <th>Game Multiplier</th>
+                <th>User</th>
+                <th>Bet</th>
+                <th>Multiplier</th>
+            </tr>
+            <tr th:each="item : ${info}">
+                <td><a th:href="${'/crash/games/' + game.id}" th:text="${game.id}"></a></td>
+                <td th:text="${game.multiplier}"></td>
+                <td th:text="${item.key.name}"></td>
+                <td th:text="${item.value.bet}"></td>
+                <td th:text="${item.value.multiplier}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
 
 
 <div th:fragment="game" id="game">
     <div class="row">
         <div class="col-md-12">
-            <table id="conversation" class="table table-striped">
+            <table id="conversation" class="table table-striped" style="
+                     border-radius: 43px;background: #e2e2e2;">
                 <thead>
                 <tr>
-                    <th>Crash Game</th>
+                    <th style="text-align: center">Crash Game</th>
                 </tr>
                 </thead>
                 <tbody id="greetings">
@@ -69,10 +145,46 @@
             </table>
         </div>
     </div>
-    <div>
-        Bet : <input type="text" name="bet" id="mybet" class="form-control"/> <br/><br/>
-        Multiplier : <input type="text" name="multiplier" id="myMultiplier" class="form-control"/> <br/><br/>
-        <button class="btn btn-primary" onclick="bet()">Bet</button>
+
+    <div style="overflow: hidden;padding: 2px; display: flex">
+        <div class="task-content">
+            <div style="text-align: center; width: fit-content;    border-radius: 12px;
+                    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #b3b6c5;
+                    background: #e2e2e2;
+                    padding: 9px;
+                    margin: 10px;">
+                <div>
+                    <div>
+                        Bet : <input type="text" id="mybet" class="form-control"/> <br/><br/>
+                        Multiplier : <input type="text" id="multiplier" class="form-control"/> <br/><br/>
+                        <button class="btn btn-primary" id="bet" onclick="makeBet()">Bet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="
+                    width: 100%;
+                    border-radius: 12px;
+                    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #b3b6c5;
+                    background: #e2e2e2;
+                    padding: 16px; min-height: 351px;margin: 11px;    font-family: cursive;">
+
+            <table class="table table-striped" id="lastGames">
+                <tr>
+                    <th>Game</th>
+                    <th>Hash</th>
+                    <th>Date</th>
+                    <th>Multiplier</th>
+                </tr>
+                <tr th:each="game : ${games}">
+                    <td><a th:href="${'/crash/games/' + game.id}" th:text="${game.id}"></a></td>
+                    <td th:text="${game.hash}"></td>
+                    <td th:text="${#dates.format(game.date, 'dd-MM-yyyy HH:mm:ss')}"></td>
+                    <td th:text="${game.multiplier}"></td>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <div id="notification" hidden style="width: 200px; height: 100px; background-color: cornflowerblue; color: chartreuse; text-align: center; ">
@@ -80,10 +192,13 @@
     </div>
     <script type="application/javascript">
 
-        function bet() {
+        function makeBet() {
 
-            var bet = document.getElementById("mybet").value;
-            var multiplier = document.getElementById("myMultiplier").value;
+            var betField = document.getElementById("mybet");
+            var multiplierField = document.getElementById("multiplier");
+            var betButton = document.getElementById("bet");
+            var multiplier = multiplierField.value;
+            var bet = betField.value;
 
             var data = {bet: bet, multiplier: multiplier};
             $.ajax({
@@ -95,6 +210,9 @@
                 timeout : 100000,
                 success : function() {
                     console.log("SUCCESS");
+                    betField.disabled = true;
+                    multiplierField.disabled = true;
+                    betButton.disabled = true;
                 },
                 error : function(e) {
                     console.log("ERROR: ", e);
@@ -105,6 +223,7 @@
             });
         };
     </script>
+    <script src="/app.js"></script>
 </div>
 
 </body>

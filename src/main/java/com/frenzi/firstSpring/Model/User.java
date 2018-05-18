@@ -1,7 +1,9 @@
 package com.frenzi.firstSpring.Model;
 
 import javax.persistence.*;
+import java.io.File;
 import java.io.Serializable;
+import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,25 +15,29 @@ public class User implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String login;
+    @Column(name = "login")
+    private String name;
+
     private String password;
     private String email;
     private double balance;
+
+    private String image;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_wallet",
+        joinColumns = @JoinColumn(name = "id_user"),
+            inverseJoinColumns = @JoinColumn(name = "id_wallet"))
+    private Set<Wallet> wallets = new HashSet<>();
+
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "id_user", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
-   /* @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "history", joinColumns = @JoinColumn(name = "id_user", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "id_game", referencedColumnName = "id"))
-    private Set<Game> games = new HashSet<>();
-
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "history", joinColumns = @JoinColumn(name = "id_user", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "id_bet", referencedColumnName = "id"))
-    private Set<Bet> bets = new HashSet<>();*/
    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER )
    private Set<History> history = new HashSet<>();
+
 
     public Set<History> getHistory() {
         return history;
@@ -44,7 +50,7 @@ public class User implements Serializable{
     public User(){}
 
     public User(String name, String email, String password){
-        this.login = name;
+        this.name = name;
         this.email = email;
         this.password = password;
     }
@@ -55,14 +61,6 @@ public class User implements Serializable{
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
     }
 
     public String getPassword() {
@@ -97,6 +95,31 @@ public class User implements Serializable{
         this.roles = roles;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Set<Wallet> getWallets() {
+        return wallets;
+    }
+
+    public void setWallets(Set<Wallet> wallets) {
+        this.wallets = wallets;
+    }
+
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this){
@@ -105,7 +128,7 @@ public class User implements Serializable{
 
         if(obj instanceof User){
             User user = (User)obj;
-            if (user.getLogin().equals(this.getLogin())) {
+            if (user.name.equals(this.name) && user.email.equals(this.email)) {
                 return true;
             }else{
                 return false;
@@ -117,11 +140,11 @@ public class User implements Serializable{
 
     @Override
     public int hashCode() {
-        return this.email.hashCode() + this.login.hashCode();
+        return this.email.hashCode() + this.name.hashCode();
     }
 
     @Override
     public String toString() {
-        return "Name: " + this.login + ", Email: " + this.email + ", Password: " + this.password;
+        return "Name: " + this.name + ", Email: " + this.email + ", Password: " + this.password;
     }
 }

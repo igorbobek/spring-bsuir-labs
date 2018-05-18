@@ -5,15 +5,29 @@
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <title>Title</title>
 </head>
-<body style="width: 20%; margin: 0 auto">
-<span th:text="${error != null} ? ${error} : ''">someValue</span>
-<form th:action="@{/signup}" method="POST" data-toggle="validator">
-    User Name : <input type="text" name="login" class="form-control"/> <br/><br/>
-    Password: <input type="password" name="password" class="form-control"/> <br/><br/>
-    Repeat Password: <input type="password" name="repeat_password" class="form-control"/> <br/><br/>
-    Email: <input type="text" name="email" class="form-control"/> <br/><br/>
-    <input class="btn btn-primary" type="submit" value="Sign up"/>
-</form>
+<body style="background: url('/wp2054297.jpg')  50% 50% no-repeat">
+
+<div>
+<div th:replace="templates :: header_menu"></div>
+    <h1 style="color: white;
+    text-align: center;">Регистрация</h1>
+    <span th:text="${error != null} ? ${error} : ''">someValue</span>
+    <form action="/signup" th:object="${user}" method="POST" enctype="utf8" style="    width: 30%;
+    margin: auto;
+    color: white;">
+        Логин: <div  style="margin-bottom: 5px;"><input th:field="*{name}" class="form-control"/>
+    </div>
+        Пароль: <div  style="margin-bottom: 5px;"><input type="password" th:field="*{password}" class="form-control"/>
+    </div>
+        Повторите пароль: <div style="margin-bottom: 5px;"><input type="password" name="matchingPassword" class="form-control"/>
+    </div>
+        Email: <div style="margin-bottom: 5px;"><input type="email" th:field="*{email}" class="form-control"/>
+    </div>
+        Изображение: <div style="margin-bottom: 5px;"><input type="text" th:field="*{image}" class="form-control"/>
+    </div>
+        <button style="margin-top: 10px;" type="submit" class="btn btn-info">Отправить</button>
+    </form>
+</div>
 
 </body>
 </html>
